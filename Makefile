@@ -1,6 +1,9 @@
 run:
 	go run src/main.go
 
+install:
+	dep ensure
+
 up:
 	docker-compose up
 
