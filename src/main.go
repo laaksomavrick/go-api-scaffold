@@ -6,7 +6,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/laaksomavrick/goals-api/src/common"
+	"github.com/laaksomavrick/goals-api/src/core"
+	"github.com/laaksomavrick/goals-api/src/user"
 )
 
 func main() {
@@ -15,10 +16,13 @@ func main() {
 	// register routes and their middlewares;
 	// register database connection;
 
-	server := common.Server{
+	server := core.Server{
 		Router: mux.NewRouter().StrictSlash(true),
 	}
-	server.Init()
+	var routes = append(
+		user.Routes,
+	)
+	server.Init(routes)
 
 }
 

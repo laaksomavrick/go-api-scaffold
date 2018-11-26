@@ -1,9 +1,9 @@
 package user
 
-import "github.com/laaksomavrick/goals-api/src/route"
+import "github.com/laaksomavrick/goals-api/src/core"
 
-var Routes = route.Routes{
-	route.Route{
+var Routes = core.Routes{
+	core.Route{
 		"Index",
 		"GET",
 		"/users",
