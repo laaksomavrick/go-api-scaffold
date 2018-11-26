@@ -2,11 +2,12 @@ package user
 
 import "github.com/laaksomavrick/goals-api/src/core"
 
+// Routes defines the shape of all the routes for the user package
 var Routes = core.Routes{
 	core.Route{
-		"Index",
-		"GET",
-		"/users",
-		Index,
+		Name:        "Index",
+		Method:      "GET",
+		Pattern:     "/users",
+		HandlerFunc: Index,
 	},
 }

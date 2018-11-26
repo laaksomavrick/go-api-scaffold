@@ -1,6 +1,7 @@
 package core
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,14 +12,19 @@ import (
 
 // Server holds the shared dependencies of the service
 type Server struct {
-	// db     *someDatabase
 	Router *mux.Router
+	DB     *sql.DB
+	// todo logger
 }
 
 // Init initializes the server instance
 func (s *Server) Init(routes Routes) {
 	s.routes(routes)
 	s.serve()
+}
+
+func InitRouter() *mux.Router {
+	return mux.NewRouter().StrictSlash(true)
 }
 
 // Serve serves the application :)

@@ -4,8 +4,11 @@ import (
 	"net/http"
 )
 
+// ServerFunc defines the shape of handler fns on routes.
+// Server is injected for common access to routes/db/logger/etc
 type ServerFunc func(s *Server) http.Handler
 
+// Route defines the shape of a route
 type Route struct {
 	Name        string
 	Method      string
@@ -13,17 +16,14 @@ type Route struct {
 	HandlerFunc ServerFunc
 }
 
+// Routes defines the shape of an array of routes
 type Routes []Route
 
-// var routes = append(
-// 	user.Routes,
-// )
-
-// inject routes from main
 func routes(s *Server, routes Routes) {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc(s)
+		// todo request logger
 		// handler = Logger(handler, route.Name)
 
 		s.Router.

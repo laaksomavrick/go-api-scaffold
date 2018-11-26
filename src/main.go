@@ -4,20 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
-
 	"github.com/laaksomavrick/goals-api/src/core"
 	"github.com/laaksomavrick/goals-api/src/user"
 )
 
 func main() {
 
-	// on server start
-	// register routes and their middlewares;
-	// register database connection;
-
 	server := core.Server{
-		Router: mux.NewRouter().StrictSlash(true),
+		Router: core.InitRouter(),
+		DB:     core.InitDatabase(),
 	}
 	var routes = append(
 		user.Routes,
