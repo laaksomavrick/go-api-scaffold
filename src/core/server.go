@@ -10,21 +10,25 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Server holds the shared dependencies of the service
+// Server holds the essential shared dependencies of the service
 type Server struct {
 	Router *mux.Router
 	DB     *sql.DB
 	// todo logger
 }
 
+// NewServer constructs a new instance of a server
+func NewServer(router *mux.Router, db *sql.DB) *Server {
+	return &Server{
+		Router: router,
+		DB:     db,
+	}
+}
+
 // Init initializes the server instance
 func (s *Server) Init(routes Routes) {
 	s.routes(routes)
 	s.serve()
-}
-
-func InitRouter() *mux.Router {
-	return mux.NewRouter().StrictSlash(true)
 }
 
 // Serve serves the application :)

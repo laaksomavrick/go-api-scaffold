@@ -14,8 +14,8 @@ const (
 	dbName     = "goals_development"
 )
 
-// InitDatabase verifies and returns a database connection
-func InitDatabase() *sql.DB {
+// NewDatabase verifies and returns a database connection
+func NewDatabase() *sql.DB {
 	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
 		dbUser, dbPassword, dbName)
 	db, err := sql.Open("postgres", dbinfo)

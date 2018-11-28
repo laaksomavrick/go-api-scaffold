@@ -10,10 +10,7 @@ func main() {
 
 	// initialize the server object
 	// values in this struct are available to all handlers
-	server := core.Server{
-		Router: core.InitRouter(),
-		DB:     core.InitDatabase(),
-	}
+	server := core.NewServer(core.NewRouter(), core.NewDatabase())
 	// initialize exported routes from packages
 	routes := append(
 		healthz.Routes,
