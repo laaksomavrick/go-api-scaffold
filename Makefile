@@ -4,6 +4,9 @@ run:
 install:
 	dep ensure
 
+test:
+	go test ./...
+
 up:
 	docker-compose up
 
