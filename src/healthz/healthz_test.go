@@ -10,24 +10,26 @@ import (
 
 func TestHealthzIndex(t *testing.T) {
 
-	// TODO: confirm this runs middlewares / entire "app"
+	// create a new server instance
+	server := core.NewServer(
+		core.NewRouter(),
+		core.NewDatabase(),
+	)
+	// add the healthz routes and apply middlewares
+	server.Wire(Routes)
 
-	server := &core.Server{
-		Router: core.NewRouter(),
-		DB:     core.NewDatabase(),
-	}
-	req, err := http.NewRequest("GET", "/healthz", nil)
-	if err != nil {
-		t.Errorf("GET /healthz error: %s", err)
-	}
-
+	// create a request
+	req, _ := http.NewRequest("GET", "/healthz", nil)
+	// create a request recorder
 	rr := httptest.NewRecorder()
 
-	handler := Index(server)
-	handler.ServeHTTP(rr, req)
+	// serve the healthz routes
+	server.Router.ServeHTTP(rr, req)
 
+	// get the result
 	res := rr.Result()
 
+	// make an assertion
 	if res.StatusCode != http.StatusOK {
 		t.Errorf("GET /healthz error: %d", res.StatusCode)
 	}

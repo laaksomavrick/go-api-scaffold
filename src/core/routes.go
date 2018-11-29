@@ -25,19 +25,3 @@ type Routes []Route
 func NewRouter() *mux.Router {
 	return mux.NewRouter().StrictSlash(true)
 }
-
-func routes(s *Server, routes Routes) {
-	for _, route := range routes {
-		var handler http.Handler
-		handler = route.HandlerFunc(s)
-		// todo request logger
-		// handler = Logger(handler, route.Name)
-
-		s.Router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(handler)
-
-	}
-}

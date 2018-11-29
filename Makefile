@@ -5,7 +5,7 @@ install:
 	dep ensure
 
 test:
-	go test ./...
+	go test -v ./...
 
 up:
 	docker-compose up

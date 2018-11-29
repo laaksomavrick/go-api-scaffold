@@ -2,7 +2,6 @@ package core
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -27,30 +26,33 @@ func NewServer(router *mux.Router, db *sql.DB) *Server {
 
 // Init initializes the server instance
 func (s *Server) Init(routes Routes) {
-	s.routes(routes)
-	s.serve()
+	s.Wire(routes)
+	s.Serve()
 }
 
 // Serve serves the application :)
-func (s *Server) serve() {
-	headersOk := handlers.AllowedHeaders([]string{"Authorization"})
-	originsOk := handlers.AllowedOrigins([]string{"*"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"})
-	fmt.Println("Running server!")
-	log.Fatal(http.ListenAndServe(":3000", handlers.CORS(originsOk, headersOk, methodsOk)(s.Router)))
+func (s *Server) Serve() {
+	log.Fatal(http.ListenAndServe(":3000", s.Router))
 }
 
-func (s *Server) routes(routes Routes) {
+// Wire applies middlewares to all routes and registers them to the Server.Router
+func (s *Server) Wire(routes Routes) {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc(s)
-		// handler = Logger(handler, route.Name)
+		handler = StdLogger(handler, route.Name)
 
 		s.Router.
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
 			Handler(handler)
+
+		headersOk := handlers.AllowedHeaders([]string{"Authorization"})
+		originsOk := handlers.AllowedOrigins([]string{"*"})
+		methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"})
+
+		handlers.CORS(originsOk, headersOk, methodsOk)(s.Router)
 
 	}
 }

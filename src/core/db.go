@@ -26,6 +26,5 @@ func NewDatabase() *sql.DB {
 	if err != nil {
 		log.Fatal("Unable to connect to the database")
 	}
-	fmt.Println("Connected to database")
 	return db
 }
