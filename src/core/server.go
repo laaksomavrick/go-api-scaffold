@@ -2,6 +2,7 @@ package core
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -32,6 +33,7 @@ func (s *Server) Init(routes Routes) {
 
 // Serve serves the application :)
 func (s *Server) Serve() {
+	fmt.Printf("Server listening on port: %d\n", 3000)
 	log.Fatal(http.ListenAndServe(":3000", s.Router))
 }
 

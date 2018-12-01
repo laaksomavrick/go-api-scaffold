@@ -13,6 +13,8 @@ func StdLogger(next http.Handler, name string) http.Handler {
 
 		next.ServeHTTP(w, r)
 
+		// todo log request body if exists
+
 		log.Printf(
 			"%s\t%s\t%s\t%s",
 			r.Method,

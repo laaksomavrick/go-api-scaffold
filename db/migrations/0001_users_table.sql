@@ -1,5 +1,6 @@
+DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
-    id integer PRIMARY KEY,
-    email varchar(64),
-    password varchar(128)
+    id serial PRIMARY KEY,
+    email varchar(64) NOT NULL,
+    password varchar(128) NOT NULL
 );

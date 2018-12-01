@@ -10,4 +10,10 @@ var Routes = core.Routes{
 		Pattern:     "/users",
 		HandlerFunc: Index,
 	},
+	core.Route{
+		Name:        "Create",
+		Method:      "POST",
+		Pattern:     "/users",
+		HandlerFunc: Create,
+	},
 }
