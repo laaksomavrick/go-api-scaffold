@@ -13,7 +13,7 @@ import (
 type Server struct {
 	Router *mux.Router
 	DB     *sql.DB
-	// todo logger
+	// todo logger obj for debug / misc server logs?
 }
 
 // NewServer constructs a new instance of a server
@@ -24,7 +24,7 @@ func NewServer(router *mux.Router, db *sql.DB) *Server {
 	}
 }
 
-// Init initializes the server instance
+// Init applies the middleware stack, registers route handlers, and serves the application
 func (s *Server) Init(routes Routes) {
 	s.Wire(routes)
 	s.Serve()

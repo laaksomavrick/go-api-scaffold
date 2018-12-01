@@ -20,11 +20,11 @@ func NewDatabase() *sql.DB {
 		dbUser, dbPassword, dbName)
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
-		log.Fatal("Unable to create the database object")
+		log.Fatalf("Err creating db object: %s", err.Error())
 	}
 	err = db.Ping()
 	if err != nil {
-		log.Fatal("Unable to connect to the database")
+		log.Fatalf("Err pinging db: %s", err.Error())
 	}
 	return db
 }
