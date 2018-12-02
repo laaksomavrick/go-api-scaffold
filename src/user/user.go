@@ -1,6 +1,10 @@
 package user
 
-import "errors"
+import (
+	"errors"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 // User defines the shape of a User for our application
 type User struct {
@@ -17,4 +21,24 @@ func (u *User) validateForCreate() error {
 		return errors.New("user: email and password must be greater than 8 characters in length")
 	}
 	return nil
+}
+
+func (u *User) prepareForInsert() (User, error) {
+	var user User
+	password := []byte(u.Password)
+	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	if err != nil {
+		return user, err
+	}
+	user = User{
+		Email:    u.Email,
+		Password: string(hashedPassword),
+	}
+	return user, nil
+}
+
+func (u *User) compareHashAndPassword(password string) error {
+	p := []byte(password)
+	hp := []byte(u.Password)
+	return bcrypt.CompareHashAndPassword(hp, p)
 }

@@ -8,13 +8,6 @@ import (
 	"github.com/laaksomavrick/goals-api/src/core"
 )
 
-// Index returns an array of all users in JSON format
-func Index(s *core.Server) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode("Hello from users!")
-	})
-}
-
 // Create persists a user object to the database and returns the created record
 func Create(s *core.Server) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -34,14 +27,13 @@ func Create(s *core.Server) http.Handler {
 			return
 		}
 
-		// todo service to hash pwd; repo for inserts
+		user, err = user.prepareForInsert()
+		if err != nil {
+			core.JSONError(w, err, http.StatusBadRequest)
+		}
 
-		query := `
-			INSERT INTO users (email, password)
-			VALUES ($1, $2)
-			RETURNING id`
-
-		err = s.DB.QueryRow(query, &user.Email, &user.Password).Scan(&user.ID)
+		repo := newUserRepository(s.DB)
+		err = repo.insert(&user)
 
 		if err != nil {
 			core.JSONError(w, err, http.StatusBadRequest)
