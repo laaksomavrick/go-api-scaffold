@@ -11,12 +11,13 @@ type ErrorResponse struct {
 	Error  string `json:"error"`
 }
 
-// JSONError issues an ErrorResponse payload to the client
-func JSONError(w http.ResponseWriter, err error, status int) {
+// EncodeJSONError issues an ErrorResponse payload to the client
+func EncodeJSONError(w http.ResponseWriter, err error, status int) {
 	errResp := &ErrorResponse{
 		Status: status,
 		Error:  err.Error(),
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(errResp)
 }

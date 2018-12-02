@@ -13,29 +13,33 @@ func Create(s *core.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			core.JSONError(w, err, http.StatusBadRequest)
+			core.EncodeJSONError(w, err, http.StatusBadRequest)
+			return
 		}
 		var user User
 		err = json.Unmarshal(body, &user)
 		if err != nil {
-			core.JSONError(w, err, http.StatusBadRequest)
+			core.EncodeJSONError(w, err, http.StatusBadRequest)
+			return
 		}
 
 		err = user.validateForCreate()
 		if err != nil {
-			core.JSONError(w, err, http.StatusBadRequest)
+			core.EncodeJSONError(w, err, http.StatusBadRequest)
+			return
 		}
 
-		user, err = user.prepareForInsert()
+		err = user.prepareForInsert()
 		if err != nil {
-			core.JSONError(w, err, http.StatusBadRequest)
+			core.EncodeJSONError(w, err, http.StatusInternalServerError)
+			return
 		}
 
 		repo := newUserRepository(s.DB)
 		err = repo.insert(&user)
 		if err != nil {
-			core.JSONError(w, err, http.StatusBadRequest)
-			panic(err)
+			core.EncodeJSONError(w, err, http.StatusInternalServerError)
+			return
 		}
 
 		json.NewEncoder(w).Encode(user)

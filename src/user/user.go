@@ -15,7 +15,7 @@ type User struct {
 
 func (u *User) validateForCreate() error {
 	if u.Email == "" || u.Password == "" {
-		return errors.New("user: found nil values")
+		return errors.New("user: missing required values")
 	}
 	if len(u.Email) < 8 || len(u.Password) < 8 {
 		return errors.New("user: email and password must be greater than 8 characters in length")
@@ -23,18 +23,14 @@ func (u *User) validateForCreate() error {
 	return nil
 }
 
-func (u *User) prepareForInsert() (User, error) {
-	var user User
+func (u *User) prepareForInsert() error {
 	password := []byte(u.Password)
 	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
 	if err != nil {
-		return user, err
+		return err
 	}
-	user = User{
-		Email:    u.Email,
-		Password: string(hashedPassword),
-	}
-	return user, nil
+	u.Password = string(hashedPassword)
+	return nil
 }
 
 func (u *User) compareHashAndPassword(password string) error {

@@ -38,7 +38,7 @@ func Logger(next http.Handler, name string) http.HandlerFunc {
 		duration := time.Since(start)
 
 		// todo log to /tmp/logs ?
-		log.Printf("LOG\nHost: %s\nRemoteAddr: %s\nMethod: %s\nRequestURI: %s\nProto: %s\nStatus: %d\nContentLength: %d\nUserAgent: %s\nDuration: %s\nBody: %s\n",
+		log.Printf("LOG\nHost: %s\nRemoteAddr: %s\nMethod: %s\nRequestURI: %s\nProto: %s\nStatus: %d\nContentLength: %d\nUserAgent: %s\nDuration: %s\nResBody: %s\n",
 			r.Host,
 			r.RemoteAddr,
 			r.Method,
