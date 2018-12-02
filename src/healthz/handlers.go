@@ -8,8 +8,8 @@ import (
 )
 
 // Index returns the status of all the services for the api
-func Index(s *core.Server) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func Index(s *core.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
 		dbOk := true
 
@@ -23,7 +23,7 @@ func Index(s *core.Server) http.Handler {
 			"postgres": boolToStatus(dbOk),
 		}
 		json.NewEncoder(w).Encode(status)
-	})
+	}
 }
 
 func boolToStatus(b bool) string {

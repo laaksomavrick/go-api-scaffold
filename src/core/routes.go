@@ -8,7 +8,7 @@ import (
 
 // ServerFunc defines the shape of handler fns on routes.
 // Server is injected for common access to routes/db/logger/etc
-type ServerFunc func(s *Server) http.Handler
+type ServerFunc func(s *Server) http.HandlerFunc
 
 // Route defines the shape of a route
 type Route struct {
