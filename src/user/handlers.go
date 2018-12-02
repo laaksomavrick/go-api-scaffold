@@ -20,19 +20,16 @@ func Create(s *core.Server) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			// todo logger
 			core.JSONError(w, err, http.StatusBadRequest)
 		}
 		var user User
 		err = json.Unmarshal(body, &user)
 		if err != nil {
-			// todo logger
 			core.JSONError(w, err, http.StatusBadRequest)
 		}
 
 		err = user.validateForCreate()
 		if err != nil {
-			// todo logger
 			core.JSONError(w, err, http.StatusBadRequest)
 			return
 		}
@@ -47,7 +44,6 @@ func Create(s *core.Server) http.Handler {
 		err = s.DB.QueryRow(query, &user.Email, &user.Password).Scan(&user.ID)
 
 		if err != nil {
-			// todo logger
 			core.JSONError(w, err, http.StatusBadRequest)
 			panic(err)
 		}

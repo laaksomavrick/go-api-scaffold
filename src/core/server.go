@@ -14,7 +14,6 @@ import (
 type Server struct {
 	Router *mux.Router
 	DB     *sql.DB
-	// todo logger obj for debug / misc server logs?
 }
 
 // NewServer constructs a new instance of a server
@@ -42,7 +41,7 @@ func (s *Server) Wire(routes Routes) {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc(s)
-		handler = StdLogger(handler, route.Name)
+		handler = Logger(handler, route.Name)
 
 		s.Router.
 			Methods(route.Method).
