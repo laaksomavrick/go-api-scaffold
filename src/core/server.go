@@ -8,19 +8,23 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	"github.com/laaksomavrick/goals-api/src/config"
 )
 
 // Server holds the essential shared dependencies of the service
 type Server struct {
 	Router *mux.Router
 	DB     *sql.DB
+	Config *config.Config
 }
 
 // NewServer constructs a new instance of a server
-func NewServer(router *mux.Router, db *sql.DB) *Server {
+func NewServer(router *mux.Router, db *sql.DB, config *config.Config) *Server {
 	return &Server{
 		Router: router,
 		DB:     db,
+		Config: config,
 	}
 }
 
@@ -32,8 +36,9 @@ func (s *Server) Init(routes Routes) {
 
 // Serve serves the application :)
 func (s *Server) Serve() {
-	fmt.Printf("Server listening on port: %d\n", 3000)
-	log.Fatal(http.ListenAndServe(":3000", s.Router))
+	port := fmt.Sprintf(":%s", s.Config.Port)
+	fmt.Printf("Server listening on port: %s\n", port)
+	log.Fatal(http.ListenAndServe(port, s.Router))
 }
 
 // Wire applies middlewares to all routes and registers them to the Server.Router
