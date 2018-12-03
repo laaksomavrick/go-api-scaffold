@@ -37,7 +37,9 @@ func (s *Server) Init(routes Routes) {
 // Serve serves the application :)
 func (s *Server) Serve() {
 	port := fmt.Sprintf(":%s", s.Config.Port)
-	fmt.Printf("Server listening on port: %s\n", port)
+	if s.Config.Env != "testing" {
+		fmt.Printf("Server listening on port: %s\n", port)
+	}
 	log.Fatal(http.ListenAndServe(port, s.Router))
 }
 
@@ -46,7 +48,7 @@ func (s *Server) Wire(routes Routes) {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc(s)
-		handler = Logger(handler, route.Name)
+		handler = s.Logger(handler, route.Name)
 
 		s.Router.
 			Methods(route.Method).

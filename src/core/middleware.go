@@ -30,12 +30,16 @@ func (w *logWriter) Write(body []byte) (int, error) {
 }
 
 // Logger writes request and response metadata to std output
-func Logger(next http.Handler, name string) http.HandlerFunc {
+func (s *Server) Logger(next http.Handler, name string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		lw := logWriter{ResponseWriter: w}
 		next.ServeHTTP(&lw, r)
 		duration := time.Since(start)
+
+		if s.Config.Env == "testing" {
+			return
+		}
 
 		// todo log to /tmp/logs ?
 		log.Printf("LOG\nHost: %s\nRemoteAddr: %s\nMethod: %s\nRequestURI: %s\nProto: %s\nStatus: %d\nContentLength: %d\nUserAgent: %s\nDuration: %s\nResBody: %s\n",

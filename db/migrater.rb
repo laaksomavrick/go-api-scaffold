@@ -1,6 +1,7 @@
 
 # eventually allow args for environment and opts
 # todo clean this up - migrate to go for test spinup/teardown?
+# todo need to run migrations on all dbs, not just dev?
 def execute_script(file_name, i, dbname = "goals_development")
   if i == 0
     (`psql "user='postgres' password='postgres'" -h 127.0.0.1 -p 5432 -a -f db/migrations/#{file_name}`)

@@ -5,15 +5,20 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/laaksomavrick/goals-api/src/config"
 	"github.com/laaksomavrick/goals-api/src/core"
 )
 
 func TestHealthzIndex(t *testing.T) {
 
+	// initializes env
+	config := config.NewConfig()
+
 	// create a new server instance
 	server := core.NewServer(
 		core.NewRouter(),
-		core.NewDatabase(),
+		core.NewDatabase(config),
+		config,
 	)
 	// add the healthz routes and apply middlewares
 	server.Wire(Routes)

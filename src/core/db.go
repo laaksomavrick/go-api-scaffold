@@ -21,6 +21,8 @@ func NewDatabase(config *config.Config) *sql.DB {
 	if err != nil {
 		log.Fatalf("Err pinging db: %s", err.Error())
 	}
-	fmt.Printf("Db: %s\t User: %s\t Password: %s\t\n", config.DbName, config.DbUser, config.DbPassword)
+	if config.Env != "testing" {
+		fmt.Printf("Db: %s\t User: %s\t Password: %s\t\n", config.DbName, config.DbUser, config.DbPassword)
+	}
 	return db
 }

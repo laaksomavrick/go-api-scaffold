@@ -1,11 +1,11 @@
 run:
-	go run src/main.go
+	GO_ENV=development DB_NAME=goals_development go run src/main.go
 
 install:
 	dep ensure
 
 test:
-	go test -v ./...
+	GO_ENV=testing DB_NAME=goals_testing go test -v ./...
 
 up:
 	docker-compose up
