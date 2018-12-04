@@ -35,8 +35,8 @@ func Create(s *core.Server) http.HandlerFunc {
 			return
 		}
 
-		repo := newUserRepository(s.DB)
-		err = repo.insert(&user)
+		repo := NewRepository(s.DB)
+		err = repo.Insert(&user)
 		if err != nil {
 			core.EncodeJSONError(w, err, http.StatusInternalServerError)
 			return

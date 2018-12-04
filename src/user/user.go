@@ -20,6 +20,7 @@ func (u *User) validateForCreate() error {
 	if len(u.Email) < 8 || len(u.Password) < 8 {
 		return errors.New("user: email and password must be greater than 8 characters in length")
 	}
+	// TODO: verify unique email
 	return nil
 }
 
@@ -33,7 +34,7 @@ func (u *User) prepareForInsert() error {
 	return nil
 }
 
-func (u *User) compareHashAndPassword(password string) error {
+func (u *User) CompareHashAndPassword(password string) error {
 	p := []byte(password)
 	hp := []byte(u.Password)
 	return bcrypt.CompareHashAndPassword(hp, p)

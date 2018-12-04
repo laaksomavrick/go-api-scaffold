@@ -1,16 +1,21 @@
 package user
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
-type userRepository struct {
+// Repository wraps common DB operations for users
+type Repository struct {
 	db *sql.DB
 }
 
-func newUserRepository(db *sql.DB) *userRepository {
-	return &userRepository{db: db}
+// NewRepository constructs a Repository
+func NewRepository(db *sql.DB) *Repository {
+	return &Repository{db: db}
 }
 
-func (ur *userRepository) insert(user *User) error {
+// Insert inserts a record into the users table
+func (ur *Repository) Insert(user *User) error {
 	query := `
 			INSERT INTO users (email, password)
 			VALUES ($1, $2)
@@ -18,4 +23,12 @@ func (ur *userRepository) insert(user *User) error {
 
 	err := ur.db.QueryRow(query, user.Email, user.Password).Scan(&user.ID)
 	return err
+}
+
+// FindByEmail finds a user by email if they exist
+func (ur *Repository) FindByEmail(email string) (User, error) {
+	var user User
+	query := "SELECT * FROM users WHERE email = $1"
+	err := ur.db.QueryRow(query, email).Scan(&user.ID, &user.Email, &user.Password)
+	return user, err
 }
