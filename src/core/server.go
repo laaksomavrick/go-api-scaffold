@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/laaksomavrick/goals-api/src/config"
+	"github.com/laaksomavrick/goals-api/src/logger"
 )
 
 // Server holds the essential shared dependencies of the service
@@ -48,7 +49,7 @@ func (s *Server) Wire(routes Routes) {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc(s)
-		handler = s.Logger(handler, route.Name)
+		handler = logger.Logger(handler, route.Name, s.Config)
 
 		s.Router.
 			Methods(route.Method).

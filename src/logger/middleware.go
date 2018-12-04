@@ -1,9 +1,11 @@
-package core
+package logger
 
 import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/laaksomavrick/goals-api/src/config"
 )
 
 type logWriter struct {
@@ -30,14 +32,14 @@ func (w *logWriter) Write(body []byte) (int, error) {
 }
 
 // Logger writes request and response metadata to std output
-func (s *Server) Logger(next http.Handler, name string) http.HandlerFunc {
+func Logger(next http.Handler, name string, config *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		lw := logWriter{ResponseWriter: w}
 		next.ServeHTTP(&lw, r)
 		duration := time.Since(start)
 
-		if s.Config.Env != "testing" {
+		if config.Env != "testing" {
 			// todo log to /tmp/logs ?
 			log.Printf("LOG\nHost: %s\nRemoteAddr: %s\nMethod: %s\nRequestURI: %s\nProto: %s\nStatus: %d\nContentLength: %d\nUserAgent: %s\nDuration: %s\nResBody: %s\n",
 				r.Host,
