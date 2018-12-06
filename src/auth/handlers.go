@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/laaksomavrick/goals-api/src/core"
 	"github.com/laaksomavrick/goals-api/src/user"
+	"github.com/laaksomavrick/goals-api/src/util"
 )
 
 // Create authenticates a user and returns a jwt for subsequent requests
@@ -15,7 +18,7 @@ func Create(s *core.Server) http.HandlerFunc {
 		// get body
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			core.EncodeJSONError(w, err, http.StatusBadRequest)
+			util.EncodeJSONError(w, err, http.StatusBadRequest)
 			return
 		}
 
@@ -23,7 +26,7 @@ func Create(s *core.Server) http.HandlerFunc {
 		var u user.User
 		err = json.Unmarshal(body, &u)
 		if err != nil {
-			core.EncodeJSONError(w, err, http.StatusBadRequest)
+			util.EncodeJSONError(w, err, http.StatusBadRequest)
 			return
 		}
 
@@ -31,22 +34,21 @@ func Create(s *core.Server) http.HandlerFunc {
 		ur := user.NewRepository(s.DB)
 		dbUser, err := ur.FindByEmail(u.Email)
 		if err != nil {
-			core.EncodeJSONError(w, err, http.StatusNotFound)
+			util.EncodeJSONError(w, err, http.StatusNotFound)
 			return
 		}
 
 		// verify input password to hashed password
 		err = dbUser.CompareHashAndPassword(u.Password)
 		if err != nil {
-			core.EncodeJSONError(w, err, http.StatusUnauthorized)
+			util.EncodeJSONError(w, err, http.StatusUnauthorized)
 			return
 		}
 
 		// generate token
-		service := NewService()
-		token, err := service.GenerateToken(dbUser)
+		token, err := generateToken(dbUser, s.Config.HmacSecret)
 		if err != nil {
-			core.EncodeJSONError(w, err, http.StatusInternalServerError)
+			util.EncodeJSONError(w, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -55,4 +57,15 @@ func Create(s *core.Server) http.HandlerFunc {
 		})
 
 	}
+}
+
+func generateToken(user user.User, hmacSecret []byte) (string, error) {
+	// TODO: store this token in db; invalidate old token if relogging in
+	// -> logging out should invalidate token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId": user.ID,
+		"nbf":    time.Date(2015, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+	})
+	tokenString, err := token.SignedString(hmacSecret)
+	return tokenString, err
 }

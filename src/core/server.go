@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/laaksomavrick/goals-api/src/config"
-	"github.com/laaksomavrick/goals-api/src/logger"
+	"github.com/laaksomavrick/goals-api/src/middleware"
 )
 
 // Server holds the essential shared dependencies of the service
@@ -49,7 +49,8 @@ func (s *Server) Wire(routes Routes) {
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc(s)
-		handler = logger.Logger(handler, route.Name, s.Config)
+		handler = middleware.CheckAuthentication(handler, route.AuthRequired, s.Config.HmacSecret)
+		handler = middleware.LogRequest(handler, route.Name, s.Config)
 
 		s.Router.
 			Methods(route.Method).

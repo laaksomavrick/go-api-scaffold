@@ -12,10 +12,11 @@ type ServerFunc func(s *Server) http.HandlerFunc
 
 // Route defines the shape of a route
 type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc ServerFunc
+	Name         string
+	Method       string
+	Pattern      string
+	AuthRequired bool
+	HandlerFunc  ServerFunc
 }
 
 // Routes defines the shape of an array of routes

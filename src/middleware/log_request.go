@@ -1,4 +1,4 @@
-package logger
+package middleware
 
 import (
 	"log"
@@ -31,17 +31,18 @@ func (w *logWriter) Write(body []byte) (int, error) {
 
 }
 
-// Logger writes request and response metadata to std output
-func Logger(next http.Handler, name string, config *config.Config) http.HandlerFunc {
+// LogRequest writes request and response metadata to std output
+func LogRequest(next http.Handler, name string, config *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		lw := logWriter{ResponseWriter: w}
 		next.ServeHTTP(&lw, r)
 		duration := time.Since(start)
+		userId := r.Context().Value("userId")
 
 		if config.Env != "testing" {
 			// todo log to /tmp/logs ?
-			log.Printf("LOG\nHost: %s\nRemoteAddr: %s\nMethod: %s\nRequestURI: %s\nProto: %s\nStatus: %d\nContentLength: %d\nUserAgent: %s\nDuration: %s\nResBody: %s\n",
+			log.Printf("LOG\nHost: %s\nRemoteAddr: %s\nMethod: %s\nRequestURI: %s\nProto: %s\nStatus: %d\nContentLength: %d\nUserAgent: %s\nDuration: %s\nUserId: %d\nResBody: %s\n",
 				r.Host,
 				r.RemoteAddr,
 				r.Method,
@@ -51,6 +52,7 @@ func Logger(next http.Handler, name string, config *config.Config) http.HandlerF
 				lw.length,
 				r.Header.Get("User-Agent"),
 				duration,
+				userId,
 				lw.body,
 			)
 		}

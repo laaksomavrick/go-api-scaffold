@@ -32,3 +32,11 @@ func (ur *Repository) FindByEmail(email string) (User, error) {
 	err := ur.db.QueryRow(query, email).Scan(&user.ID, &user.Email, &user.Password)
 	return user, err
 }
+
+// FindByEmail finds a user by email if they exist
+func (ur *Repository) FindById(id int) (User, error) {
+	var user User
+	query := "SELECT * FROM users WHERE id = $1"
+	err := ur.db.QueryRow(query, id).Scan(&user.ID, &user.Email, &user.Password)
+	return user, err
+}
